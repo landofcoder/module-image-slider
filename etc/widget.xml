@@ -81,6 +81,7 @@
 			</parameter>
 			<parameter name="enable_single" xsi:type="select"  visible="true" source_model="Magento\Config\Model\Config\Source\Yesno">
 				<label translate="true">Enable Single Item</label>
+				<value>1</value>
 			</parameter>
 			<parameter name="large_max_items" xsi:type="text" visible="true">
 				<label translate="true">Large Max Items</label>
