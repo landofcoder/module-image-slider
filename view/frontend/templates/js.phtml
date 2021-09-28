@@ -45,8 +45,52 @@ require(['jquery'],function($){
 								config['rtl'] = jQuery(owlCarousel).data('rtl');
 							}
 							if(jQuery(owlCarousel).data('items')){
-								
 								config['items'] = jQuery(owlCarousel).data('items');
+							}
+							if (typeof(config['items']) !== "undefined" && config['items'] == 1) {
+                                config["responsive"] = {
+										0:{
+											items:1
+										},
+										600:{
+											items:1
+										},
+										1000:{
+											items:1
+										}
+								};
+								config["singleItem"] = true;
+							} else if (jQuery(owlCarousel).data('extralarge-items')){
+								
+								const extralarge_items = jQuery(owlCarousel).data('extralarge-items');
+								const large_items = jQuery(owlCarousel).data('large-items');
+								const portrait_items = jQuery(owlCarousel).data('portrait-items');
+								const tablet_items = jQuery(owlCarousel).data('tablet-items');
+								const smalltablet_items = jQuery(owlCarousel).data('smalltablet-items');
+								const mobile_items = jQuery(owlCarousel).data('mobile-items');
+
+								config['items'] = parseInt(extralarge_items);
+
+								config["responsive"] = {
+										0: {
+											items: parseInt(mobile_items)
+										},
+										600: {
+											items: parseInt(smalltablet_items)
+										},
+										767: {
+											items: parseInt(tablet_items)
+										},
+										1000: {
+											items: parseInt(portrait_items)
+										},
+										1200: {
+											items: parseInt(jQuery(owlCarousel).data('items'))
+										},
+										1900: {
+											items: parseInt(extralarge_items)
+										}
+								};
 							}
 							if(jQuery(owlCarousel).data('loop')){
 								config['loop'] = jQuery(owlCarousel).data('loop');

@@ -6,12 +6,16 @@ $title               = $this->getConfig('title');
 $addition_class      = $this->getConfig('addition_class');
 
 // OWL Carousel
+$enable_single = (int)$this->getConfig('enable_single', 0);
 $large_max_items     = (int)$this->getConfig('large_max_items',6);
 $large_items         = (int)$this->getConfig('large_items',5);
 $portrait_items      = (int)$this->getConfig('portrait_items',4);
 $tablet_items        = (int)$this->getConfig('tablet_items',4);
 $tablet_small_items  = (int)$this->getConfig('tablet_small_items',2);
 $mobile_items        = (int)$this->getConfig('mobile_items',1);
+if ($enable_single) {
+	$large_max_items = $large_items = $portrait_items = $tablet_items = $tablet_small_items = $mobile_items = 1;
+}
 
 $animateOut          = $this->getConfig('animateout','0');
 $animateIn           = $this->getConfig('animatein','0');
@@ -45,7 +49,13 @@ $previous_icon_class = $this->getConfig('previous_icon_class');
 		<ul id="imageslider-<?php echo $blockId ?>" class="owl-carousel" 
 				data-animateout="<?php echo $animateOut?'"'.$animateOut.'"':"false"; ?>"
 				data-animatein="<?php echo $animateIn?'"'.$animateIn.'"':"false"; ?>"
-				data-items = "1"
+				data-items = "<?= (int)$large_max_items; ?>"
+				data-extralarge-items = "<?= (int)$large_max_items; ?>"
+				data-large-items = '<?= (int)$large_items; ?>'
+				data-portrait-items = '<?= (int)$portrait_items; ?>'
+				data-tablet-items = '<?= (int)$tablet_items; ?>'
+				data-smalltablet-items = '<?= (int)$tablet_small_items; ?>'
+				data-mobile-items = '<?= (int)$mobile_items; ?>'
 				data-dot ="<?php echo $dots?"true":"false"; ?>"
 				data-nav="<?php echo $nav?"true":"false" ?>"
 				data-loop ="<?php echo $loop?"true":"false" ?>"
