@@ -3,9 +3,9 @@ require(['jquery'],function($){
     $(document).ready(function(){
     	if(jQuery(".image-slider-owl").length > 0 ) {
 			require([
-				'jquery',
+				'jquery'
 				<?php if($this->helper("Ves\All\Helper\Data")->getConfig("enable_owlcarousel")): ?>
-				"Ves_All/lib/owl.carousel/owl.carousel.min",
+				,"Ves_All/lib/owl.carousel/owl.carousel.min"
 			<?php endif; ?>
 			], function () {
 				jQuery(document).ready(function($) {
