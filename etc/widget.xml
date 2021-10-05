@@ -85,28 +85,28 @@
 			</parameter>
 			<parameter name="large_items" xsi:type="text" visible="true">
 				<label translate="true">Large Items</label>
-				<depends><parameter name="enable_single" value="0" /></depends>
 				<description translate="true"><![CDATA[Default: 5]]></description>
+				<depends><parameter name="enable_single" value="0" /></depends>
 			</parameter>
 			<parameter name="portrait_items" xsi:type="text" visible="true">
 				<label translate="true">Portrait Items</label>
-				<depends><parameter name="enable_single" value="0" /></depends>
 				<description translate="true"><![CDATA[Default: 4]]></description>
+				<depends><parameter name="enable_single" value="0" /></depends>
 			</parameter>
 			<parameter name="tablet_items" xsi:type="text" visible="true">
 				<label translate="true">Tablet Items</label>
-				<depends><parameter name="enable_single" value="0" /></depends>
 				<description translate="true"><![CDATA[Default: 4]]></description>
+				<depends><parameter name="enable_single" value="0" /></depends>
 			</parameter>
 			<parameter name="tablet_small_items" xsi:type="text" visible="true">
 				<label translate="true">Small Tablet Items</label>
-				<depends><parameter name="enable_single" value="0" /></depends>
 				<description translate="true"><![CDATA[Default: 2]]></description>
+				<depends><parameter name="enable_single" value="0" /></depends>
 			</parameter>
 			<parameter name="mobile_items" xsi:type="text" visible="true">
 				<label translate="true">Mobile Items</label>
-				<depends><parameter name="enable_single" value="0" /></depends>
 				<description translate="true"><![CDATA[Default: 1]]></description>
+				<depends><parameter name="enable_single" value="0" /></depends>
 			</parameter>
 			<parameter name="autoplay_timeout" xsi:type="text" visible="true">
 				<label translate="true">Autoplay Timeout</label>
