@@ -2,15 +2,16 @@
  * Copyright © 2015 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
-define([
+ define([
     'jquery',
     'underscore',
-    'tinymce',
+    'wysiwygAdapter',
+    'mage/adminhtml/wysiwyg/tiny_mce/html5-schema',
     'mage/translate',
     'prototype',
     'mage/adminhtml/events',
     'mage/adminhtml/browser'
-], function(jQuery, _, tinyMCE) {
+], function(jQuery, _, tinyMCE, html5Schema) {
 
     vesSliderTinyMceWysiwygSetup = Class.create();
 
@@ -19,10 +20,14 @@ define([
         mediaBrowserTargetElementId: null,
 
         initialize: function(htmlId, config) {
+            if (config.baseStaticUrl && config.baseStaticDefaultUrl) {
+                tinyMCE.baseURL = tinyMCE.baseURL.replace(config.baseStaticUrl, config.baseStaticDefaultUrl);
+            }
             this.id = htmlId;
             this.config = config;
+            this.schema = config.schema || html5Schema;
 
-            _.bindAll(this, 'beforeSetContent', 'saveContent', 'onChangeContent', 'openFileBrowser');
+            _.bindAll(this, 'beforeSetContent', 'saveContent', 'onChangeContent', 'openFileBrowser', 'updateTextArea');
 
             varienGlobalEvents.attachEventHandler('tinymceChange', this.onChangeContent);
             varienGlobalEvents.attachEventHandler('tinymceBeforeSetContent', this.beforeSetContent);
@@ -46,11 +51,16 @@ define([
                 });
             }
 
+            if (jQuery.isReady) {
+                tinyMCE.dom.Event.domLoaded = true;
+            }
+
             tinyMCE.init(this.getSettings(mode));
         },
 
         getSettings: function(mode) {
-            var plugins = 'inlinepopups,safari,pagebreak,style,layer,table,advhr,advimage,emotions,iespell,media,searchreplace,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras';
+            var plugins = 'inlinepopups,safari,pagebreak,style,layer,table,advhr,advimage,emotions,iespell,media,searchreplace,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras',
+                self = this;
 
             if (this.config.widget_plugin_src) {
                 plugins = 'magentowidget,' + plugins;
@@ -91,6 +101,8 @@ define([
                 magentoPluginsOptions: magentoPluginsOptions,
                 doctype: '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
                 setup: function(ed){
+                    ed.onInit.add(self.onEditorInit.bind(self));
+
                     ed.onSubmit.add(function(ed, e) {
                         varienGlobalEvents.fireEvent('tinymceSubmit', e);
                     });
@@ -153,7 +165,27 @@ define([
 
             return settings;
         },
+        applySchema: function (editor) {
+            var schema      = editor.schema,
+                schemaData  = this.schema,
+                makeMap     = tinyMCE.makeMap;
 
+            jQuery.extend(true, {
+                nonEmpty: schema.getNonEmptyElements(),
+                boolAttrs: schema.getBoolAttrs(),
+                whiteSpace: schema.getWhiteSpaceElements(),
+                shortEnded: schema.getShortEndedElements(),
+                selfClosing: schema.getSelfClosingElements(),
+                blockElements: schema.getBlockElements()
+            }, {
+                nonEmpty: makeMap(schemaData.nonEmpty),
+                boolAttrs: makeMap(schemaData.boolAttrs),
+                whiteSpace: makeMap(schemaData.whiteSpace),
+                shortEnded: makeMap(schemaData.shortEnded),
+                selfClosing: makeMap(schemaData.selfClosing),
+                blockElements: makeMap(schemaData.blockElements)
+            });
+        },
         openFileBrowser: function(o) {
             var typeTitle,
                 storeId = this.config.store_id !== null ? this.config.store_id : 0,
@@ -247,6 +279,10 @@ define([
             }
         },
 
+        onEditorInit: function (editor) {
+            this.applySchema(editor);
+        },
+
         onFormValidation: function() {
             if (tinyMCE.get(this.id)) {
                 $(this.id).value = tinyMCE.get(this.id).getContent();
@@ -333,25 +369,53 @@ define([
             return result;
         },
 
-        beforeSetContent: function(o){
-            if (this.config.add_widgets) {
-                o.content = this.encodeWidgets(o.content);
-                o.content = this.encodeDirectives(o.content);
-            } else if (this.config.add_directives) {
-                o.content = this.encodeDirectives(o.content);
+         updateTextArea: function () {
+            var editor = tinyMCE.get(this.id),
+                content;
+
+            if (!editor) {
+                return;
             }
+
+            content = editor.getContent();
+            content = this.decodeContent(content);
+
+            jQuery('#' + this.id).val(content).trigger('change');
+        },
+        decodeContent: function (content) {
+            var result = content;
+
+            if (this.config.add_widgets) {
+                result = this.decodeWidgets(result);
+                result = this.decodeDirectives(result);
+            } else if (this.config.add_directives) {
+                result = this.decodeDirectives(result);
+            }
+
+            if(result!=''){
+                result = result.replace(/&nbsp;/g, ' ');
+            }
+
+            return result;
+        },
+        encodeContent: function (content) {
+            var result = content;
+
+            if (this.config.add_widgets) {
+                result = this.encodeWidgets(result);
+                result = this.encodeDirectives(result);
+            } else if (this.config.add_directives) {
+                result = this.encodeDirectives(result);
+            }
+
+            return result;
+        },
+        beforeSetContent: function(o){
+            o.content = this.encodeContent(o.content);
         },
 
         saveContent: function(o) {
-            if (this.config.add_widgets) {
-                o.content = this.decodeWidgets(o.content);
-                o.content = this.decodeDirectives(o.content);
-            } else if (this.config.add_directives) {
-                o.content = this.decodeDirectives(o.content);
-            }
-            if(o.content!=''){
-                o.content = o.content.replace(/&nbsp;/g, ' ');
-            }
+            o.content = this.decodeContent(o.content);
         }
     };
 
