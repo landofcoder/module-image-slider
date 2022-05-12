@@ -25,6 +25,7 @@
 	<head>
 		<css src="Ves_ImageSlider::css/owl.carousel.min.css" />
 		<css src="Ves_ImageSlider::css/animate.css" />
+		<!-- <css src="Ves_ImageSlider::css/styles.css" /> -->
 	</head>
 	<body>
 		<referenceContainer name="before.body.end">

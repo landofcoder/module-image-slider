@@ -44,6 +44,8 @@ class WysiwygEditor extends Template implements RendererInterface
      */
     protected $_backendData = null;
 
+    protected $element_id = "";
+
     /**
      * @param \Magento\Backend\Block\Template\Context                $context           
      * @param \Magento\Framework\Data\Form\Element\Factory           $factoryElement    
@@ -64,18 +66,43 @@ class WysiwygEditor extends Template implements RendererInterface
         $this->_wysiwygConfig = $wysiwygConfig;
         parent::__construct($context);
     }
+    public function isBase64Encoded($data) {
+        if(base64_encode($data) === $data) return false;
+        if (!preg_match('~[^0-9a-zA-Z+/=]~', $data)) {
+            $check = str_split(base64_decode($data));
+            $x = 0;
+            foreach ($check as $char) if (ord($char) > 126) $x++;
+            if ($x/count($check)*100 < 30) return true;
+        }
+        $decoded = base64_decode($data);
+        // Check if there are valid base64 characters
+        if (!preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $data)) return false;
+        // if string returned contains not printable chars
+        if (0 < preg_match('/((?![[:graph:]])(?!\s)(?!\p{L}))./', $decoded, $matched)) return false;
+        if (!preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $data)) return false;
 
+        if(base64_encode(base64_decode($data)) === $data){
+            return true;
+        }
+        return false;
+    }
     public function render(AbstractElement $element){
         $html = '';
         $config = $this->_wysiwygConfig->getConfig();
-
+        $element_id = $element->getHtmlId().rand().time();
+        $this->element_id = $element_id;
         $config['height'] = '300px';
         $config = json_encode($config->getData());
 
         $value = $element->getValue();
         if(!is_array($value)){
-            if(base64_decode($value, true) == true){
+            $value = str_replace(" ","+", $value);
+            if($this->isBase64Encoded($value)){
                 $value = base64_decode($value);
+                
+                if($this->isBase64Encoded($value)){
+                    $value = base64_decode($value);
+                }
             }
         }
 
@@ -88,7 +115,7 @@ class WysiwygEditor extends Template implements RendererInterface
         $html .= $element->getLabelHtml();
 
         $html .= '<div class="admin__field-control control">';
-        $html .= '<textarea id="' . $element->getHtmlId() . '" name="' . $element->getName() . '" class="textarea admin__control-textarea wysiwyg-editor ' . $class . '" rows="5" cols="15" data-ui-id="product-tabs-attributes-tab-fieldset-element-textarea-' . $element->getName() . '" aria-hidden="true">'.$value.'</textarea>';
+        $html .= '<textarea id="' . $element_id . '" name="' . $element->getName() . '" class="textarea admin__control-textarea wysiwyg-editor ' . $class . '" rows="5" cols="15" data-ui-id="product-tabs-attributes-tab-fieldset-element-textarea-' . $element->getName() . '" aria-hidden="true">'.$value.'</textarea>';
   
             $html .= $this->getLayout()->createBlock(
                 'Magento\Backend\Block\Widget\Button',
@@ -97,19 +124,24 @@ class WysiwygEditor extends Template implements RendererInterface
                     'data' => [
                         'label' => __('WYSIWYG Editor'),
                         'type' => 'button',
-                        'class' => 'action-wysiwyg',
+                        'class' => 'action-wysiwyg hidden',
                         'onclick' => 'imagesliderWysiwygEditor.open(\'' . $this->_backendData->getUrl(
                             'catalog/product/wysiwyg'
-                        ) . '\', \'' . $element->getHtmlId() . '\')',
+                        ) . '\', \'' . $element_id . '\')',
                     ]
                 ]
             )->toHtml();
+            $html .= $this->_getToggleButtonHtml(true);
 
             $html .= <<<HTML
             <script>
+            window.tinyMCE_GZ = window.tinyMCE_GZ || {}; window.tinyMCE_GZ.loaded = true;
             require([
-                'jquery',
-                'Ves_ImageSlider/js/wysiwyg/tiny_mce/setup'
+                "jquery",
+                "mage/translate", 
+                "mage/adminhtml/events",
+                "Ves_ImageSlider/js/wysiwyg/tiny_mce/setup",
+                "mage/adminhtml/wysiwyg/widget"
             ], function(jQuery){
             var config = $config,
                 editor;
@@ -124,15 +156,25 @@ class WysiwygEditor extends Template implements RendererInterface
                 }
             });
 
-            editor{$element->getHtmlId()} = new vesSliderTinyMceWysiwygSetup(
-                '{$element->getHtmlId()}',
+            editor{$element_id} = new vesSliderTinyMceWysiwygSetup(
+                '{$element_id}',
                 config
             );
 
-            editor{$element->getHtmlId()}.turnOn();
+            editorFormValidationHandler = editor{$element_id}.onFormValidation.bind(editor{$element_id});
+
+            Event.observe("toggle{$element_id}", "click", editor{$element_id}.toggle.bind(editor{$element_id}));
+
+            Event.observe("toggle{$element_id}", "click", function(){jQuery("#toggle{$element_id}").toggleClass("texteditor-enabled"); jQuery("#toggle{$element_id}").parent().find(".action-wysiwyg").toggleClass("hidden");});
+
+            varienGlobalEvents.attachEventHandler("formSubmit", editorFormValidationHandler);
             varienGlobalEvents.clearEventHandlers("open_browser_callback");
-            varienGlobalEvents.attachEventHandler("open_browser_callback", editor{$element->getHtmlId()}.openFileBrowser);
-            jQuery('#{$element->getHtmlId()}')
+            varienGlobalEvents.attachEventHandler("open_browser_callback", editor{$element_id}.openFileBrowser);
+
+            varienGlobalEvents.clearEventHandlers("open_browser_callback");
+            varienGlobalEvents.attachEventHandler("open_browser_callback", editor{$element_id}.openFileBrowser);
+
+            jQuery('#{$element_id}')
                 .addClass('wysiwyg-editor')
                 .data(
                     'wysiwygEditor',
@@ -144,5 +186,84 @@ HTML;
         $html .= '</div>';
         $html .= '</div>';
         return $html;
+    }
+
+    /**
+     * Return custom button HTML
+     *
+     * @param array $data Button params
+     * @return string
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
+    protected function _getButtonHtml($data)
+    {
+        $html = '<button type="button"';
+        $html .= ' class="scalable ' . (isset($data['class']) ? $data['class'] : '') . '"';
+        $html .= isset($data['onclick']) ? ' onclick="' . $data['onclick'] . '"' : '';
+        $html .= isset($data['style']) ? ' style="' . $data['style'] . '"' : '';
+        $html .= isset($data['id']) ? ' id="' . $data['id'] . '"' : '';
+        $html .= '>';
+        $html .= isset($data['title']) ? '<span><span><span>' . $data['title'] . '</span></span></span>' : '';
+        $html .= '</button>';
+
+        return $html;
+    }
+     /**
+     * Return HTML button to toggling WYSIWYG
+     *
+     * @param bool $visible
+     * @return string
+     */
+    protected function _getToggleButtonHtml($visible = true)
+    {
+        $html = $this->_getButtonHtml(
+            [
+                'title' => $this->translate('Show / Hide Editor'),
+                'class' => 'action-show-hide',
+                'style' => $visible ? '' : 'display:none',
+                'id' => 'toggle' . $this->getHtmlId(),
+            ]
+        );
+        return $html;
+    }
+    /**
+     * Translate string using defined helper
+     *
+     * @param string $string String to be translated
+     * @return \Magento\Framework\Phrase
+     */
+    public function translate($string)
+    {
+        return (string)new \Magento\Framework\Phrase($string);
+    }
+
+    public function getHtmlId(){
+        return $this->element_id;
+    }
+
+    /**
+     * Escape a string's contents.
+     *
+     * @param string $string
+     * @return string
+     */
+    protected function _escape($string)
+    {
+        return htmlspecialchars($string, ENT_COMPAT);
+    }
+
+    /**
+     * Return the escaped value of the element specified by the given index.
+     *
+     * @param null|int|string $index
+     * @return string
+     */
+    public function getEscapedValue($value = null)
+    {
+
+        if ($filter = $this->getValueFilter()) {
+            $value = $filter->filter($value);
+        }
+        return $this->_escape($value);
     }
 }

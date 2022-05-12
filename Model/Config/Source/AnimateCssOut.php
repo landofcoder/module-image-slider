@@ -28,7 +28,7 @@ class AnimateCssOut implements \Magento\Framework\Option\ArrayInterface
      */
     public function __construct(
     	\Magento\Cms\Model\Block $blockModel
-    	) {
+    ) {
     	$this->_groupModel = $blockModel;
     }
 

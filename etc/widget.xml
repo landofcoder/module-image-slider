@@ -61,57 +61,23 @@
 				<label translate="true">Autoplay Timeout</label>
 				<description translate="true"><![CDATA[Default: 3000]]></description>
 				<depends><parameter name="autoplay" value="1" /></depends>
+				<value>3000</value>
 			</parameter>
 			<parameter name="autoplay_speed" xsi:type="text" visible="true">
 				<label translate="true">Autoplay Speed</label>
-				<description translate="true"><![CDATA[Default: 800]]></description>
+				<description translate="true"><![CDATA[Default: 3000]]></description>
 				<depends><parameter name="autoplay" value="1" /></depends>
+				<value>3000</value>
 			</parameter>
 			<parameter name="nav_speed" xsi:type="text" visible="true">
 				<label translate="true">Navigation Speed</label>
 				<description translate="true"><![CDATA[Default: 800]]></description>
+				<value>800</value>
 			</parameter>
 			<parameter name="dots_speed" xsi:type="text" visible="true">
 				<label translate="true">Dots Speed</label>
 				<description translate="true"><![CDATA[Default: 800]]></description>
-			</parameter>
-			<parameter name="enable_single" xsi:type="select"  visible="true" source_model="Magento\Config\Model\Config\Source\Yesno">
-				<label translate="true">Enable Single Item</label>
-			</parameter>
-			<parameter name="large_max_items" xsi:type="text" visible="true">
-				<label translate="true">Large Max Items</label>
-				<description translate="true"><![CDATA[Default: 6]]></description>
-				<depends><parameter name="enable_single" value="0" /></depends>
-			</parameter>
-			<parameter name="large_items" xsi:type="text" visible="true">
-				<label translate="true">Large Items</label>
-				<description translate="true"><![CDATA[Default: 5]]></description>
-				<depends><parameter name="enable_single" value="0" /></depends>
-			</parameter>
-			<parameter name="portrait_items" xsi:type="text" visible="true">
-				<label translate="true">Portrait Items</label>
-				<description translate="true"><![CDATA[Default: 4]]></description>
-				<depends><parameter name="enable_single" value="0" /></depends>
-			</parameter>
-			<parameter name="tablet_items" xsi:type="text" visible="true">
-				<label translate="true">Tablet Items</label>
-				<description translate="true"><![CDATA[Default: 4]]></description>
-				<depends><parameter name="enable_single" value="0" /></depends>
-			</parameter>
-			<parameter name="tablet_small_items" xsi:type="text" visible="true">
-				<label translate="true">Small Tablet Items</label>
-				<description translate="true"><![CDATA[Default: 2]]></description>
-				<depends><parameter name="enable_single" value="0" /></depends>
-			</parameter>
-			<parameter name="mobile_items" xsi:type="text" visible="true">
-				<label translate="true">Mobile Items</label>
-				<description translate="true"><![CDATA[Default: 1]]></description>
-				<depends><parameter name="enable_single" value="0" /></depends>
-			</parameter>
-			<parameter name="autoplay_timeout" xsi:type="text" visible="true">
-				<label translate="true">Autoplay Timeout</label>
-				<description translate="true"><![CDATA[Default: 3000]]></description>
-				<depends><parameter name="autoplay" value="1" /></depends>
+				<value>800</value>
 			</parameter>
 			<parameter name="autoplay_hover" xsi:type="select" visible="true" source_model="Magento\Config\Model\Config\Source\Yesno">
 				<label translate="true">Pause On Hover</label>
@@ -128,13 +94,13 @@
 			</parameter>
 			<parameter name="next_icon_class" xsi:type="text"  visible="true">
 				<label translate="true">Next Icon Class</label>
-				<description translate="true"><![CDATA[Input css icon class, we can use icon awesome font. Default: fa fa-angle-right]]></description>
 				<depends><parameter name="enable_custom_nav" value="1" /></depends>
+				<value>fa fa-angle-right</value>
 			</parameter>
 			<parameter name="previous_icon_class" xsi:type="text"  visible="true">
 				<label translate="true">Previous Icon Class</label>
-				<description translate="true"><![CDATA[Input css icon class, we can use icon awesome font. Default: fa fa-angle-left]]></description>
 				<depends><parameter name="enable_custom_nav" value="1" /></depends>
+				<value>fa fa-angle-left</value>
 			</parameter>
 			<parameter name="rtl" xsi:type="select"  visible="true" source_model="Magento\Config\Model\Config\Source\Yesno">
 				<label translate="true">RTL Layout</label>
@@ -146,7 +112,7 @@
 			</parameter>
 			<parameter name="lazyload" xsi:type="select"  visible="true" source_model="Magento\Config\Model\Config\Source\Yesno">
 				<label translate="true">Lazy Load</label>
-				<description translate="true"><![CDATA[Lazy load images. data-src and data-src-retina for highres. Also load images into background inline style if element is not &lt;img>&gt;]]></description>
+				<description translate="true"><![CDATA[Lazy load images. data-src and data-src-retina for highres. Also load images into background inline style if element is not img]]></description>
 			</parameter>
 			<parameter name="touchdrag" xsi:type="select"  visible="true" source_model="Magento\Config\Model\Config\Source\Yesno">
 				<label translate="true">Touch Drag</label>

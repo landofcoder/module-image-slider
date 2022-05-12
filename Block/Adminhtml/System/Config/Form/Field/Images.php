@@ -71,8 +71,8 @@ class Images extends \Magento\Config\Block\System\Config\Form\Field\FieldArray\A
         };});
         </script>';
 
-return $this->_decorateRowHtml($element, $html).$script;
-}
+        return $this->_decorateRowHtml($element, $html).$script;
+    }
 
 
     /**

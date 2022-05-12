@@ -24,7 +24,6 @@
 	<head>
 		<css src="Ves_ImageSlider::css/styles.css" />
 	</head>
-	<update handle="editor"/>
 	<body>
 		<referenceContainer name="js">
 			<block class="Magento\Framework\View\Element\Template" template="Ves_ImageSlider::wysiwyg/js.phtml" name="imageslider.wysiwyg.js"/>

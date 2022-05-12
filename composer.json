@@ -1,10 +1,11 @@
 {
-    "name": "landofcoder/module-imageslider",
-    "description": "magento 2 image slider",
+    "name": "venustheme/module-imageslider",
+    "description": "Simple image slider",
     "require": {
+        "venustheme/module-all": "1.0.2"
     },
     "type": "magento2-module",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "license": [
         "OSL-3.0",
         "AFL-3.0"

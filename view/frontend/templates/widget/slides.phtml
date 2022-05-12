@@ -6,16 +6,12 @@ $title               = $this->getConfig('title');
 $addition_class      = $this->getConfig('addition_class');
 
 // OWL Carousel
-$enable_single = (int)$this->getConfig('enable_single', 0);
 $large_max_items     = (int)$this->getConfig('large_max_items',6);
 $large_items         = (int)$this->getConfig('large_items',5);
 $portrait_items      = (int)$this->getConfig('portrait_items',4);
 $tablet_items        = (int)$this->getConfig('tablet_items',4);
 $tablet_small_items  = (int)$this->getConfig('tablet_small_items',2);
 $mobile_items        = (int)$this->getConfig('mobile_items',1);
-if ($enable_single) {
-	$large_max_items = $large_items = $portrait_items = $tablet_items = $tablet_small_items = $mobile_items = 1;
-}
 
 $animateOut          = $this->getConfig('animateout','0');
 $animateIn           = $this->getConfig('animatein','0');
@@ -39,48 +35,42 @@ $enable_custom_nav   = $this->getConfig('enable_custom_nav');
 $next_icon_class     = $this->getConfig('next_icon_class');
 $previous_icon_class = $this->getConfig('previous_icon_class');
 ?>
-<div class="block widget ves-widget imageslider-widget <?php echo $addition_class?$addition_class:'' ?>">
-	<?php if($title){ ?>
+<div class="block widget ves-widget imageslider-widget <?= $addition_class? $block->escapeHtmlAttr($addition_class):'' ?>">
+	<?php if($title) : ?>
 	<div class="block-title">
-		<strong><?php echo $title ?></strong>
+		<strong><?= $title ?></strong>
 	</div>
-	<?php } ?>
+	<?php endif; ?>
 	<div class="block-content image-slider-owl">
-		<ul id="imageslider-<?php echo $blockId ?>" class="owl-carousel" 
-				data-animateout="<?php echo $animateOut?'"'.$animateOut.'"':"false"; ?>"
-				data-animatein="<?php echo $animateIn?'"'.$animateIn.'"':"false"; ?>"
-				data-items = "<?= (int)$large_max_items; ?>"
-				data-extralarge-items = "<?= (int)$large_max_items; ?>"
-				data-large-items = '<?= (int)$large_items; ?>'
-				data-portrait-items = '<?= (int)$portrait_items; ?>'
-				data-tablet-items = '<?= (int)$tablet_items; ?>'
-				data-smalltablet-items = '<?= (int)$tablet_small_items; ?>'
-				data-mobile-items = '<?= (int)$mobile_items; ?>'
-				data-dot ="<?php echo $dots?"true":"false"; ?>"
-				data-nav="<?php echo $nav?"true":"false" ?>"
-				data-loop ="<?php echo $loop?"true":"false" ?>"
-				data-autoplay="<?php echo $autoplay?"true":"false" ?>"
-				data-autoplay-timeout="<?php echo (int)$autoplay_timeout ?>"
-				data-autoplay-speed="<?php echo $autoplay_speed?(int)$autoplay_speed:'false'; ?>"
-				data-navspeed="<?php echo $nav_speed?(int)$nav_speed:'false'; ?>"
-				data-dotsspeed="<?php echo $dots_speed?(int)$dots_speed:'false'; ?>"
-				data-autoplay-pauonhover="<?php echo $autoplay_hover?"true":"false" ?>"
-				data-autoheight="<?php echo $autoheight?"true":"false" ?>"
-				data-lazyload="<?php echo $lazyLoad?"true":"false" ?>"
-				data-touchdrag="<?php echo $touchDrag?"true":"false" ?>"
-				data-mousedrag="<?php echo $mouseDrag?"true":"false" ?>"
-				data-pulldrag="<?php echo $pullDrag?"true":"false" ?>" >
-			<?php foreach ($slides as $k => $v) { ?>
-			<li class="slider-block"><?php echo $v; ?></li>
-			<?php } ?>
+		<ul id="imageslider-<?= $block->escapeHtmlAttr($blockId) ?>" class="owl-carousel" 
+				data-animateout="<?= $animateOut?'"'.$animateOut.'"':"false"; ?>"
+				data-animatein="<?= $animateIn?'"'.$animateIn.'"':"false"; ?>"
+				data-items = "1"
+				data-dot ="<?= $dots?"true":"false"; ?>"
+				data-nav="<?= $nav?"true":"false" ?>"
+				data-loop ="<?= $loop?"true":"false" ?>"
+				data-autoplay="<?= $autoplay?"true":"false" ?>"
+				data-autoplay-timeout="<?= (int)$autoplay_timeout ?>"
+				data-autoplay-speed="<?= $autoplay_speed?(int)$autoplay_speed:'false'; ?>"
+				data-navspeed="<?= $nav_speed?(int)$nav_speed:'false'; ?>"
+				data-dotsspeed="<?= $dots_speed?(int)$dots_speed:'false'; ?>"
+				data-autoplay-pauonhover="<?= $autoplay_hover?"true":"false" ?>"
+				data-autoheight="<?= $autoheight?"true":"false" ?>"
+				data-lazyload="<?= $lazyLoad?"true":"false" ?>"
+				data-touchdrag="<?= $touchDrag?"true":"false" ?>"
+				data-mousedrag="<?= $mouseDrag?"true":"false" ?>"
+				data-pulldrag="<?= $pullDrag?"true":"false" ?>" >
+			<?php foreach ($slides as $k => $v) : ?>
+			<li class="slider-block"><?= $v; ?></li>
+			<?php endforeach; ?>
 		</ul>
-		<?php if($enable_custom_nav){ ?>
+		<?php if($enable_custom_nav) : ?>
 		<?php $nav = false; ?>
 		<div class="customNavigation">
-			<a class="prev<?php echo $blockId ?>"><span class="<?php echo $previous_icon_class ?>"></span><?php echo __('Previous'); ?></a>
-			<a class="next<?php echo $blockId ?>"><span class="<?php echo $next_icon_class ?>"><?php echo __('Next'); ?></a>
+			<a class="prev<?= $block->escapeHtmlAttr($blockId) ?>"><span class="<?= $block->escapeHtmlAttr($previous_icon_class) ?>"></span><?= __('Previous'); ?></a>
+			<a class="next<?= $block->escapeHtmlAttr($blockId) ?>"><span class="<?= $block->escapeHtmlAttr($next_icon_class) ?>"><?= __('Next'); ?></a>
 		</div>
-		<?php } ?>
+		<?php endif; ?>
 	</div>
 </div>
  
